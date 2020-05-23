@@ -1,0 +1,12 @@
+/.vs
+/MarsRover/bin
+/MarsRover/obj
+/MarsRover.App/bin
+/MarsRover.App/obj
+/MarsRover.Service/bin
+/MarsRover.Service/obj
+/MarsRover.Service.Test/bin
+/MarsRover.Service.Test/obj
+/MarsRover.Test/bin
+/MarsRover.Test/obj
+/*.user

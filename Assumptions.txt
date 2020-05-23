@@ -1,0 +1,25 @@
+1. Each rover always move 1 unit for each M command. For example, if it's in 1,1 N and it receives M, next state will always will be 1,2 N.
+
+2. Rovers that receive invalid commands should be reported.
+
+3. If a command has 2 rovers and rover 1 receive invalid commands, rover 2 still performs mission.
+
+4. If a rover goes outbound, should be reported.
+
+5. Commands are provided as a string separated by end-of-line character and inside the line, by space.
+
+6. All commands should come in a single line.
+
+7. In the end of the mission, all non-errored rovers position should be reported.
+
+8. Command is case insensitive.
+
+9. Positions and Plateau size are always relative and do not support negative numbers.
+
+10. Commands will come in one string batch.
+
+11. One position can hold only 1 hover.
+
+12. Rovers that would collide should stop and wait for rescue.
+
+13. No need to move the rovers in parallel.
