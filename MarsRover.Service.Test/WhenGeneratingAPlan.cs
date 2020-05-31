@@ -3,12 +3,20 @@ using System.Linq;
 using FluentAssertions;
 using MarsRover.Models;
 using MarsRover.Service.Controls;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace MarsRover.Service.Test
 {
     public class WhenGeneratingAPlan
     {
+        private readonly PlanControl _planControl;
+
+        public WhenGeneratingAPlan()
+        {
+            var logger = new NullLoggerFactory().CreateLogger("Logger");
+            _planControl = new PlanControl(logger);
+        }
         
         [Theory]
         [InlineData("5 5 \r 1 1 N \r MMR")]
@@ -19,8 +27,7 @@ namespace MarsRover.Service.Test
             var rover = new RoverBuilder(1).Operational( 1, 1, Direction.North).Build();
             object[] commands = {Command.Move, Command.Move, Command.TurnRight};
 
-            var commandParser = new PlanControl(command);
-            var plan = commandParser.GeneratePlan();
+            var plan = _planControl.GeneratePlan(command);
 
             plan.Plateau.Should().Be(plateau);
 
@@ -48,8 +55,7 @@ namespace MarsRover.Service.Test
             
             const string stringCommand = "5 5 \r 1 1 N \r MMR \r 3 3 W \r MLM";
 
-            var commandParser = new PlanControl(stringCommand);
-            var plan = commandParser.GeneratePlan();
+            var plan = _planControl.GeneratePlan(stringCommand);
 
             plan.Plateau.Should().Be(plateau);
 
@@ -84,8 +90,7 @@ namespace MarsRover.Service.Test
 
             object[] commands2 = {Command.Move, Command.TurnLeft, Command.Move};
 
-            var commandParser = new PlanControl(command);
-            var plan = commandParser.GeneratePlan();
+            var plan = _planControl.GeneratePlan(command);
 
             plan.Plateau.Should().Be(plateau);
 
@@ -110,7 +115,7 @@ namespace MarsRover.Service.Test
         {
             Action action = () =>
             {
-                _ = new PlanControl(command);
+                _ = _planControl.GeneratePlan(command);
             };
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,8 +132,8 @@ namespace MarsRover.Service.Test
         [InlineData("5  5 \r 1  1  N \r MXR")]
         public void GivenAnInvalidCommand_ShouldThrowArgumentException(string command)
         {
-            var commandParser = new PlanControl(command);
-            Action action = () => commandParser.GeneratePlan();
+
+            Action action = () => _planControl.GeneratePlan(command);
             action.Should().Throw<ArgumentException>();
         }
     }

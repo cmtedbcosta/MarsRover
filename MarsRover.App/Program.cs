@@ -16,8 +16,6 @@ namespace MarsRover.App
                     configure.AddConsole(x => x.TimestampFormat = "[HH:mm:ss.fff] ");
                 });
 
-            ServiceDependencies.Register(serviceCollection);
-
             // Setup Dependency Injection
             var serviceProvider = serviceCollection
                 .BuildServiceProvider();
@@ -37,6 +35,18 @@ namespace MarsRover.App
   |,-'--|--'-.| NASA MARS ROVERS PROGRAM";
 
             logger.LogInformation(header);
+
+            logger.LogInformation("Do you want to see debug logs? (Y/N, default is N)");
+            
+            var showDebugLogsInConsole = Console.ReadLine()?
+                .Trim().ToUpper() == "Y";
+
+            if (showDebugLogsInConsole)
+                logger.LogInformation("Debug logging activated.");
+
+            ServiceDependencies.Register(serviceCollection, showDebugLogsInConsole);
+            serviceProvider = serviceCollection
+                .BuildServiceProvider();
 
             logger.LogInformation("Please enter the commands:");
 
@@ -59,7 +69,9 @@ namespace MarsRover.App
                 logger.LogError($"Error initializing mission: {e.Message}");
             }
 
-            logger.LogInformation("Press any key to exit the process...");
+            // Use service logger to avoid logger overlap
+            var serviceLogger = serviceProvider.GetService<ILogger>();
+            serviceLogger.LogInformation("Press any key to exit the process...");
             Console.ReadKey(); 
 
         }

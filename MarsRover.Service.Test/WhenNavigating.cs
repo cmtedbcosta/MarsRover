@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using MarsRover.Models;
 using MarsRover.Service.Controls;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace MarsRover.Service.Test
@@ -13,9 +14,10 @@ namespace MarsRover.Service.Test
 
         public WhenNavigating()
         {
+            var logger = new NullLoggerFactory().CreateLogger("Logger");
             var directionControl = new DirectionControl();
             var movementControl = new MovementControl();
-            _navigationControl = new NavigationControl(movementControl, directionControl);
+            _navigationControl = new NavigationControl(movementControl, directionControl, logger);
         }
 
         public static IEnumerable<object[]> ValidInputForDirectionControl

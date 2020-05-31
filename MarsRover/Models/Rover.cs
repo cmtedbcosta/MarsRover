@@ -2,11 +2,12 @@
 {
     public class Rover
     {
-        internal Rover(uint id, uint positionX, uint positionY, Direction facingDirection, bool isWaitingRescue, string error)
+        internal Rover(uint id, uint positionX, uint positionY, Direction facingDirection, bool isWaitingRescue, bool isStoppedBeforeCollision, string error)
         {
             Position = (positionX, positionY);
             FacingDirection = facingDirection;
             IsWaitingRescue = isWaitingRescue;
+            IsStoppedBeforeCollision = isStoppedBeforeCollision;
             Id = id;
             Error = error;
         }
@@ -20,6 +21,8 @@
         public Direction FacingDirection { get; }
 
         public bool IsWaitingRescue { get; }
+
+        public bool IsStoppedBeforeCollision { get; }
 
         public string Error { get; }
 

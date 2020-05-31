@@ -9,6 +9,7 @@ namespace MarsRover.Models
         private uint _positionY;
         private Direction _facingDirection;
         private bool _isWaitingRescue;
+        private bool _isStoppedBeforeCollision;
         private string _error;
 
         public RoverBuilder(uint id)
@@ -19,6 +20,7 @@ namespace MarsRover.Models
         public RoverBuilder NotDeployed(string error)
         {
             _isWaitingRescue = true;
+            _isStoppedBeforeCollision = false;
             _error = string.IsNullOrEmpty(error) ? throw new ArgumentNullException(nameof(error)) : error;
             return this;
         }
@@ -26,6 +28,7 @@ namespace MarsRover.Models
         public RoverBuilder StoppedBeforeCrash(uint positionX, uint positionY, Direction facingDirection, string error)
         {
             _isWaitingRescue = true;
+            _isStoppedBeforeCollision = true;
             _error = string.IsNullOrEmpty(error) ? throw new ArgumentNullException(nameof(error)) : error;
             _positionY = positionY;
             _positionX = positionX;
@@ -36,6 +39,7 @@ namespace MarsRover.Models
         public RoverBuilder Operational(uint positionX, uint positionY, Direction facingDirection)
         {
             _isWaitingRescue = false;
+            _isStoppedBeforeCollision = false;
             _error = null;
             _positionY = positionY;
             _positionX = positionX;
@@ -43,6 +47,6 @@ namespace MarsRover.Models
             return this;
         }
 
-        public Rover Build() => new Rover(_id, _positionX, _positionY, _facingDirection, _isWaitingRescue, _error);
+        public Rover Build() => new Rover(_id, _positionX, _positionY, _facingDirection, _isWaitingRescue, _isStoppedBeforeCollision, _error);
     }
 }

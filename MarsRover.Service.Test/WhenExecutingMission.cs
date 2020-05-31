@@ -13,10 +13,12 @@ namespace MarsRover.Service.Test
 
         public WhenExecutingMission()
         {
+            var logger = new NullLoggerFactory().CreateLogger("Logger");
             var directionControl = new DirectionControl();
             var movementControl = new MovementControl();
-            var navigationControl = new NavigationControl(movementControl, directionControl);
-            _missionControl = new MissionControl(new NullLoggerFactory(), navigationControl);
+            var planControl = new PlanControl(logger);
+            var navigationControl = new NavigationControl(movementControl, directionControl, logger);
+            _missionControl = new MissionControl(logger, navigationControl, planControl);
         }
 
         public static IEnumerable<object[]> ValidInputForMissionControl
