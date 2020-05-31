@@ -64,7 +64,6 @@ namespace MarsRover.Service.Controls
 
                 _logger.LogDebug($"Next direction for rover {rover.Name} is {direction.Name}");
 
-                _logger.LogDebug($"Processing command {command.Name}...");
                 return new RoverBuilder(rover.Id).Operational(rover.Position.X,
                         rover.Position.Y,
                         direction)
