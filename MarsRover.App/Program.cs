@@ -10,13 +10,16 @@ namespace MarsRover.App
     {
         static void Main()
         {
-            // Setup Dependency Injection
-            var serviceProvider = new ServiceCollection()
+            var serviceCollection = new ServiceCollection()
                 .AddLogging(configure =>
                 {
                     configure.AddConsole(x => x.TimestampFormat = "[HH:mm:ss.fff] ");
-                })
-                .AddScoped<IMissionControl, MissionControl>()
+                });
+
+            ServiceDependencies.Register(serviceCollection);
+
+            // Setup Dependency Injection
+            var serviceProvider = serviceCollection
                 .BuildServiceProvider();
 
             var logger = serviceProvider.GetService<ILoggerFactory>()

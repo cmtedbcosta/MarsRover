@@ -52,7 +52,7 @@ namespace MarsRover.Service.Controls
 
                     var roverDirection = roverParameters[2].Trim();
 
-                    var rover = new Rover(currentSequence, roverX, roverY, Direction.FromCode(roverDirection));
+                    var rover = new RoverBuilder(currentSequence).Operational(roverX, roverY, Direction.FromCode(roverDirection)).Build();
                     currentSequence++;
 
                     roverCreated = true;
@@ -70,12 +70,8 @@ namespace MarsRover.Service.Controls
                 {
                     // If the rover was already created, get last one
                     roversWithError.Add(roverCreated
-                        ? new Rover(currentSequence - 1,
-                            $"Rover {currentSequence - 1} has invalid commands." +
-                            Environment.NewLine + e.Message)
-                        : new Rover(currentSequence,
-                            $"Rover {currentSequence} has invalid parameters." +
-                            Environment.NewLine + e.Message));
+                        ? new RoverBuilder(currentSequence - 1).NotDeployed($"Rover {currentSequence - 1} has invalid commands." + Environment.NewLine + e.Message).Build()
+                        : new RoverBuilder(currentSequence).NotDeployed($"Rover {currentSequence} has invalid parameters." + Environment.NewLine + e.Message).Build());
 
                     if (roverCreated) continue;
 

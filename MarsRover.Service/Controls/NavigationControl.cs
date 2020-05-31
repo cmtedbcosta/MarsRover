@@ -2,22 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using MarsRover.Models;
+using MarsRover.Service.Interfaces;
 
 namespace MarsRover.Service.Controls
 {
-    internal class NavigationControl
+    internal class NavigationControl : INavigationControl
     {
-        private readonly Plateau _plateau;
-        private readonly Rover _rover;
-        private readonly IEnumerable<Command> _commands;
-        private readonly IEnumerable<Rover> _otherRovers;
+        private readonly IMovementControl _movementControl;
+        private readonly IDirectionControl _directionControl;
 
-        public NavigationControl(Plateau plateau, Rover rover, IEnumerable<Command> commands, IEnumerable<Rover> otherRovers)
+        public NavigationControl(IMovementControl movementControl, IDirectionControl directionControl)
         {
-            _plateau = plateau ?? throw new ArgumentNullException(nameof(plateau));
-            _rover = rover ?? throw new ArgumentNullException(nameof(rover));
-            _commands = commands ?? throw new ArgumentNullException(nameof(commands));
-            _otherRovers = otherRovers ?? throw new ArgumentNullException(nameof(otherRovers));
+            _movementControl = movementControl;
+            _directionControl = directionControl;
+        }
+
+        public Rover Navigate(Plateau plateau, Rover rover, IEnumerable<Command> commands, IEnumerable<Rover> otherRovers)
+        {
+            if (plateau == null) throw new ArgumentNullException(nameof(plateau));
+            if (rover == null) throw new ArgumentNullException(nameof(rover));
+            if (commands == null) throw new ArgumentNullException(nameof(commands));
+            if (otherRovers == null) throw new ArgumentNullException(nameof(otherRovers));
+
+            return commands.Aggregate(rover, (current, command) => Goto(plateau, current, command, otherRovers));
         }
 
         private static bool IsOutOfBounds((uint X, uint Y) position, Plateau plateau) =>
@@ -29,36 +36,39 @@ namespace MarsRover.Service.Controls
             return occupiedPositions.Contains(position);
         }
 
-        public Rover Navigate() => _commands.Aggregate(_rover, Goto);
-
-        private Rover Goto(Rover rover, Command command)
+        private Rover Goto(Plateau plateau, Rover rover, Command command, IEnumerable<Rover> otherRovers)
         {
             if (rover.IsWaitingRescue)
                 return rover;
 
             if (command == Command.Move)
             {
-                var movementControl = new MovementControl(rover.Position, rover.FacingDirection);
-                var nextPosition = movementControl.GetNextPosition();
+                var nextPosition = _movementControl.GetNextPosition(rover.Position, rover.FacingDirection);
 
-                if (IsSamePositionOfOtherRover(nextPosition, _otherRovers))
-                    return new Rover(rover.Id, rover.Position.X, rover.Position.Y, rover.FacingDirection,  $"Collision detected on {nextPosition}.");
+                if (IsSamePositionOfOtherRover(nextPosition, otherRovers))
+                    return new RoverBuilder(rover.Id).StoppedBeforeCrash(rover.Position.X,
+                            rover.Position.Y,
+                            rover.FacingDirection,
+                            $"Collision detected on {nextPosition}.")
+                        .Build();
 
                 return IsOutOfBounds(nextPosition,
-                    _plateau)
-                    ? new Rover(rover.Id,
-                        rover.Position.X,
-                        rover.Position.Y,
-                        rover.FacingDirection,
-                        true)
-                    : new Rover(rover.Id,
-                        nextPosition.X,
-                        nextPosition.Y,
-                        rover.FacingDirection);
+                    plateau)
+                    ? new RoverBuilder(rover.Id).StoppedBeforeCrash(rover.Position.X,
+                            rover.Position.Y,
+                            rover.FacingDirection,
+                            $"Out of bounds detected on {nextPosition}.")
+                        .Build()
+                     : new RoverBuilder(rover.Id).Operational(nextPosition.X,
+                            nextPosition.Y,
+                            rover.FacingDirection)
+                        .Build();
             }
 
-            var directionControl = new DirectionControl(rover.FacingDirection, command);
-            return new Rover(rover.Id, rover.Position.X, rover.Position.Y, directionControl.GetNextDirection());
+            return new RoverBuilder(rover.Id).Operational(rover.Position.X,
+                    rover.Position.Y,
+                    _directionControl.GetNextDirection(rover.FacingDirection, command))
+                .Build();
         }
     }
 }

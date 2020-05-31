@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRover", "MarsRover\MarsRover.csproj", "{EEC109FB-B00E-49DE-B925-93FFE84C75EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover", "MarsRover\MarsRover.csproj", "{EEC109FB-B00E-49DE-B925-93FFE84C75EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRover.Test", "MarsRover.Test\MarsRover.Test.csproj", "{38430B8F-24B5-4A07-A686-69464AC9DEC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover.Test", "MarsRover.Test\MarsRover.Test.csproj", "{38430B8F-24B5-4A07-A686-69464AC9DEC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRover.Service", "MarsRover.Service\MarsRover.Service.csproj", "{693EC440-1C4D-4BF9-8226-B417466010AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover.Service", "MarsRover.Service\MarsRover.Service.csproj", "{693EC440-1C4D-4BF9-8226-B417466010AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRover.Service.Test", "MarsRover.Service.Test\MarsRover.Service.Test.csproj", "{DEC7AEE5-C683-4007-827B-600AF720CC6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover.Service.Test", "MarsRover.Service.Test\MarsRover.Service.Test.csproj", "{DEC7AEE5-C683-4007-827B-600AF720CC6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRover.App", "MarsRover.App\MarsRover.App.csproj", "{FDCF7AFB-BA53-48C9-B4B8-93E09C331871}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover.App", "MarsRover.App\MarsRover.App.csproj", "{FDCF7AFB-BA53-48C9-B4B8-93E09C331871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

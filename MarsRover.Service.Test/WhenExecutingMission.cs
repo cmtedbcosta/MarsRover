@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using MarsRover.Service.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -12,7 +13,10 @@ namespace MarsRover.Service.Test
 
         public WhenExecutingMission()
         {
-            _missionControl = new MissionControl(new NullLoggerFactory());
+            var directionControl = new DirectionControl();
+            var movementControl = new MovementControl();
+            var navigationControl = new NavigationControl(movementControl, directionControl);
+            _missionControl = new MissionControl(new NullLoggerFactory(), navigationControl);
         }
 
         public static IEnumerable<object[]> ValidInputForMissionControl

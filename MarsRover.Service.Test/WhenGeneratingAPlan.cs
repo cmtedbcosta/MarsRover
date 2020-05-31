@@ -16,7 +16,7 @@ namespace MarsRover.Service.Test
         public void GivenAValidCommand_ShouldGenerateACorrectPlan_AndNoRoversWithError(string command)
         {
             var plateau = new Plateau(5,5);
-            var rover = new Rover(1, 1, 1, Direction.North);
+            var rover = new RoverBuilder(1).Operational( 1, 1, Direction.North).Build();
             object[] commands = {Command.Move, Command.Move, Command.TurnRight};
 
             var commandParser = new PlanControl(command);
@@ -40,10 +40,10 @@ namespace MarsRover.Service.Test
         {
             var plateau = new Plateau(5,5);
             
-            var rover1 = new Rover(1, 1, 1, Direction.North);
+            var rover1 = new RoverBuilder(1).Operational( 1, 1, Direction.North).Build();
             object[] commands1 = {Command.Move, Command.Move, Command.TurnRight};
             
-            var rover2 = new Rover(2, 3, 3, Direction.West);
+            var rover2 = new RoverBuilder(2).Operational(3, 3, Direction.West).Build();
             object[] commands2 = {Command.Move, Command.TurnLeft, Command.Move};
             
             const string stringCommand = "5 5 \r 1 1 N \r MMR \r 3 3 W \r MLM";
@@ -79,9 +79,9 @@ namespace MarsRover.Service.Test
         {
             var plateau = new Plateau(5,5);
 
-            var rover1 = new Rover(1, 1, 1, Direction.North);
+            var rover1 = new RoverBuilder(1).Operational( 1, 1, Direction.North).Build();
+            var rover2 = new RoverBuilder(2).Operational(3, 3, Direction.West).Build();
 
-            var rover2 = new Rover(2, 3, 3, Direction.West);
             object[] commands2 = {Command.Move, Command.TurnLeft, Command.Move};
 
             var commandParser = new PlanControl(command);
@@ -108,7 +108,10 @@ namespace MarsRover.Service.Test
         [InlineData(null)]
         public void GivenAnEmptyOrNullCommand_ShouldThrowArgumentNullException(string command)
         {
-            Action action = () => new PlanControl(command);
+            Action action = () =>
+            {
+                _ = new PlanControl(command);
+            };
             action.Should().Throw<ArgumentNullException>();
         }
 

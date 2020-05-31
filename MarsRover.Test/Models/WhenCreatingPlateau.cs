@@ -14,11 +14,14 @@ namespace MarsRover.Test.Models
         [InlineData(99,99)]
         public void GivenValidInputForAPlateau_ShouldCreateAPlateau(uint maxX, uint maxY)
         {
-            Action action = () => new Plateau(maxX, maxY);
+            Action action = () =>
+            {
+                var plateau = new Plateau(maxX, maxY);
+                plateau.MaxSizeX.Should().Be(maxX);
+                plateau.MaxSizeY.Should().Be(maxY);
+            };
+
             action.Should().NotThrow("Direction was correctly created.");
-            var plateau = new Plateau(maxX, maxY);
-            plateau.MaxSizeX.Should().Be(maxX);
-            plateau.MaxSizeY.Should().Be(maxY);
         }
     }
 }

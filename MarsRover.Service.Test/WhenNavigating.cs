@@ -9,12 +9,21 @@ namespace MarsRover.Service.Test
 {
     public class WhenNavigating
     {
+        private readonly NavigationControl _navigationControl;
+
+        public WhenNavigating()
+        {
+            var directionControl = new DirectionControl();
+            var movementControl = new MovementControl();
+            _navigationControl = new NavigationControl(movementControl, directionControl);
+        }
+
         public static IEnumerable<object[]> ValidInputForDirectionControl
         {
             get
             {
                 var plateau = new Plateau(99, 99);
-                var rover = new Rover(1, 1, 1, Direction.North);
+                var rover = new RoverBuilder(1).Operational( 1, 1, Direction.North).Build();
 
                 var route1 = new[]
                 {
@@ -63,8 +72,7 @@ namespace MarsRover.Service.Test
         public void GivenPlateauRoverAndCommands_ShouldNavigateToPosition_AndBeFacingDirection(Plateau plateau, Rover rover, Command[] commands, 
             (uint X, uint Y) expectedPosition, Direction expectedDirection)
         {
-            var navigationControl = new NavigationControl(plateau, rover, commands, Array.Empty<Rover>());
-            var newRover = navigationControl.Navigate();
+            var newRover = _navigationControl.Navigate(plateau, rover, commands, Array.Empty<Rover>());
             newRover.Position.Should().Be(expectedPosition);
             newRover.FacingDirection.Should().Be(expectedDirection);
             newRover.IsWaitingRescue.Should().BeFalse();
@@ -74,7 +82,7 @@ namespace MarsRover.Service.Test
         public void GivenPlateauRover_AndCommandsThatSendTheRoverOutOfBounds_ShouldStopMovingAndBeWaitingForRescue()
         {
             var plateau = new Plateau(5, 5);
-            var rover = new Rover(1, 3, 3, Direction.North);
+            var rover = new RoverBuilder(1).Operational(3, 3, Direction.North).Build();
 
             var commands = new[]
             {
@@ -84,8 +92,7 @@ namespace MarsRover.Service.Test
             var expectedPosition = ((uint) 3, (uint) 5);
             var expectedDirection = Direction.North; 
 
-            var navigationControl = new NavigationControl(plateau, rover, commands, Array.Empty<Rover>());
-            var newRover = navigationControl.Navigate();
+            var newRover = _navigationControl.Navigate(plateau, rover, commands, Array.Empty<Rover>());
             newRover.Position.Should().Be(expectedPosition);
             newRover.FacingDirection.Should().Be(expectedDirection);
             newRover.IsWaitingRescue.Should().BeTrue();
@@ -95,20 +102,19 @@ namespace MarsRover.Service.Test
         public void GivenPlateauRover_AndCommandsThatSendTheRoverInCollisionWithOtherRover_ShouldStopMovingAndBeWaitingForRescue()
         {
             var plateau = new Plateau(5, 5);
-            var rover = new Rover(1, 0, 0, Direction.North);
+            var rover = new RoverBuilder(1).Operational(0, 0, Direction.North).Build();
 
             var commands = new[]
             {
                 Command.Move, Command.Move, Command.Move, Command.Move
             };
 
-            var otherRovers = new[] {new Rover(2, 0, 2, Direction.North)};
+            var otherRovers = new[] { new RoverBuilder(2).Operational( 0, 2, Direction.North).Build() };
 
             var expectedPosition = ((uint) 0, (uint) 1);
             var expectedDirection = Direction.North; 
 
-            var navigationControl = new NavigationControl(plateau, rover, commands, otherRovers);
-            var newRover = navigationControl.Navigate();
+            var newRover = _navigationControl.Navigate(plateau, rover, commands, otherRovers);
             newRover.Position.Should().Be(expectedPosition);
             newRover.FacingDirection.Should().Be(expectedDirection);
             newRover.IsWaitingRescue.Should().BeTrue();

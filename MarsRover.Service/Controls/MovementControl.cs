@@ -1,36 +1,30 @@
 ﻿using System;
 using MarsRover.Models;
+using MarsRover.Service.Interfaces;
 
 namespace MarsRover.Service.Controls
 {
-    internal class MovementControl
+    internal class MovementControl : IMovementControl
     {
-        private readonly (uint X, uint Y) _currentPosition;
-        private readonly Direction _facingDirection;
         private const uint MovementUnit =  1;
 
-        public MovementControl((uint, uint) currentPosition, Direction facingDirection)
+        public (uint X, uint Y) GetNextPosition((uint X, uint Y) currentPosition, Direction facingDirection)
         {
-            _currentPosition = currentPosition;
-            _facingDirection = facingDirection ?? throw new ArgumentNullException(nameof(facingDirection));
-        }
+            if (facingDirection == null) throw new ArgumentNullException(nameof(facingDirection));
 
-        public (uint X, uint Y) GetNextPosition()
-        {
-            if (_facingDirection == Direction.North)
+            if (facingDirection == Direction.North)
             {
-                return (_currentPosition.X, _currentPosition.Y + MovementUnit);
+                return (currentPosition.X, currentPosition.Y + MovementUnit);
             }
 
-            if (_facingDirection == Direction.South)
+            if (facingDirection == Direction.South)
             {
-                return (_currentPosition.X, _currentPosition.Y - MovementUnit);
+                return (currentPosition.X, currentPosition.Y - MovementUnit);
             }
 
-            return _facingDirection == Direction.East
-                ? (_currentPosition.X + MovementUnit, _currentPosition.Y)
-                // West
-                : (_currentPosition.X - MovementUnit, _currentPosition.Y);
+            return facingDirection == Direction.East
+                ? (currentPosition.X + MovementUnit, currentPosition.Y)
+                : (currentPosition.X - MovementUnit, currentPosition.Y);
         }
     }
 }

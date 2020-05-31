@@ -1,34 +1,17 @@
-﻿using System;
-
-namespace MarsRover.Models
+﻿namespace MarsRover.Models
 {
     public class Rover
     {
-        public Rover(uint id, uint positionX, uint positionY, Direction facingDirection, bool isWaitingRescue = false)
+        internal Rover(uint id, uint positionX, uint positionY, Direction facingDirection, bool isWaitingRescue, string error)
         {
             Position = (positionX, positionY);
-            FacingDirection = facingDirection ?? throw new ArgumentNullException(nameof(facingDirection), "Facing direction is invalid");
+            FacingDirection = facingDirection;
             IsWaitingRescue = isWaitingRescue;
             Id = id;
+            Error = error;
         }
 
-        public Rover(uint id, string error)
-        {
-            Id = id;
-            IsWaitingRescue = false;
-            Error = string.IsNullOrEmpty(error) ? throw new ArgumentNullException(nameof(error)) : error;
-        }
-
-        public Rover(uint id, uint positionX, uint positionY, Direction facingDirection, string error)
-        {
-            Id = id;
-            IsWaitingRescue = true;
-            Position = (positionX, positionY);
-            FacingDirection = facingDirection ?? throw new ArgumentNullException(nameof(facingDirection), "Facing direction is invalid");
-            Error = string.IsNullOrEmpty(error) ? throw new ArgumentNullException(nameof(error)) : error;
-        }
-
-        public string Name => $"Rover {Id.ToString()}";
+        public string Name => $"Rover {Id}";
 
         public uint Id { get; }
 

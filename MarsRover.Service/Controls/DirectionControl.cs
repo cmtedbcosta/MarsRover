@@ -1,25 +1,20 @@
 ﻿using System;
 using MarsRover.Models;
+using MarsRover.Service.Interfaces;
 
 namespace MarsRover.Service.Controls
 {
-    internal class DirectionControl
+    internal class DirectionControl : IDirectionControl
     {
-        private readonly Direction _currentDirection;
-        private readonly Command _command;
-
-        public DirectionControl(Direction currentDirection, Command command)
+        public Direction GetNextDirection(Direction currentDirection, Command command)
         {
-            _currentDirection = currentDirection ?? throw new ArgumentNullException(nameof(currentDirection));
-            _command = command ?? throw new ArgumentNullException(nameof(command));
-        }
+            if (currentDirection == null) throw new ArgumentNullException(nameof(currentDirection));
+            if (command == null) throw new ArgumentNullException(nameof(command));
 
-        public Direction GetNextDirection()
-        {
-            if (_command == Command.Move)
+            if (command == Command.Move)
                 throw new InvalidOperationException("Direction control does not support move command");
             
-            return _command == Command.TurnLeft ? _currentDirection.Previous() : _currentDirection.Next();
+            return command == Command.TurnLeft ? currentDirection.Previous() : currentDirection.Next();
         }
 
     }

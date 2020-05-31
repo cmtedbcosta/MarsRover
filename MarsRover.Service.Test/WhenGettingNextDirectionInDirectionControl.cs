@@ -9,6 +9,12 @@ namespace MarsRover.Service.Test
 {
     public class WhenGettingNextDirectionInDirectionControl
     {
+        private readonly DirectionControl _directionControl;
+
+        public WhenGettingNextDirectionInDirectionControl()
+        {
+            _directionControl = new DirectionControl();
+        }
     
         public static IEnumerable<object[]> ValidInputForDirectionControl
         {
@@ -33,12 +39,11 @@ namespace MarsRover.Service.Test
         [MemberData(nameof(ValidInputForDirectionControl))]
         public void GivenCurrentDirection_AndAValidCommand_ShouldOutputCorrectDirection(Direction currentDirection, Command command, Direction nextDirection)
         {
-            var directionControl = new DirectionControl(currentDirection, command);
-            var nextCalculatedDirection = directionControl.GetNextDirection();
+            var nextCalculatedDirection = _directionControl.GetNextDirection(currentDirection, command);
             nextCalculatedDirection.Should().Be(nextDirection);
         }
 
-        private Direction GetRandomDirection()
+        private static Direction GetRandomDirection()
         {
             var random = new Random();
             var index = random.Next(Direction.All.Count);
@@ -48,8 +53,7 @@ namespace MarsRover.Service.Test
         [Fact]
         public void GivenARandomDirection_WithAMoveCommand_ShouldThrowInvalidException()
         {
-            var directionControl = new DirectionControl(GetRandomDirection(), Command.Move);
-            Action action = () =>  directionControl.GetNextDirection();
+            Action action = () =>  _directionControl.GetNextDirection(GetRandomDirection(), Command.Move);
             action.Should().Throw<InvalidOperationException>();
         }
     }
