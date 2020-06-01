@@ -1,6 +1,6 @@
 ﻿using System;
-using MarsRover.Ports;
 using MarsRover.Service;
+using MarsRover.Service.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

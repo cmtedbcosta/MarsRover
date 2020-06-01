@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using MarsRover.Models;
-using MarsRover.Ports;
 using MarsRover.Service.Interfaces;
 using Microsoft.Extensions.Logging;
+using IMissionControl = MarsRover.Service.Interfaces.IMissionControl;
 
 namespace MarsRover.Service
 {
