@@ -40,19 +40,13 @@ namespace MarsRover.Service
 
             var roversRoutes = plan.RoverRoutes.ToArray();
 
-            var roversCurrentPosition = roversRoutes.ToDictionary(roverRoutes => roverRoutes.Rover.Id,
-                roverRoutes => roverRoutes.Rover);
-
             var roversAfterNavigation = new List<Rover>();
             foreach (var roverRoutes in roversRoutes)
             {
                 var roverAfterNavigation =  _navigationControl.Navigate(plan.Plateau,
                     roverRoutes.Rover,
                     roverRoutes.Commands,
-                    roversCurrentPosition.Where(m => m.Key != roverRoutes.Rover.Id).Select(m => m.Value));
-
-                // Update rover map
-                roversCurrentPosition[roverAfterNavigation.Id] = roverAfterNavigation;
+                    roversAfterNavigation.Where(r => r.Id != roverRoutes.Rover.Id));
 
                 roversAfterNavigation.Add(roverAfterNavigation);
             }

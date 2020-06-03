@@ -25,11 +25,11 @@ namespace MarsRover.Service.Test
         {
             get
             {
-                yield return new object[] { "5 5 \r 1 1 N \r MMM", new (uint, uint)[] { (1, 4) }}; // normal
-                yield return new object[] { "5 5 \r 1 1 N \r MMM \r 1 1 N \r MMM", new (uint, uint)[] { (1, 4), (1, 3) }}; // with collision
-                yield return new object[] { "5 5 \r 1 1 X \r MMM \r 1 1 N \r MMM", new (uint, uint)[] { (0, 0), (1, 4) }}; // with invalid rover
-                yield return new object[] { "5 5 \r 1 1 N \r MMM \r 1 1 N \r MXM", new (uint, uint)[] { (1, 4), (0, 0) }}; // with invalid rover
-                yield return new object[] { "5 5 \r 1 1 N \r MMM \r 1 1 N \r MMM \r 1 1 X \r MMM" , new (uint, uint)[] { (1, 4), (1, 3), (0, 0) }}; // with collision and invalid rover
+                yield return new object[] { "10 10 \r 1 1 N \r MMM", new (uint, uint)[] { (1, 4) }}; // normal
+                yield return new object[] { "10 10 \r 1 1 N \r MMM \r 1 0 N \r MMM", new (uint, uint)[] { (1, 4), (1, 3) }}; // with collision
+                yield return new object[] { "10 10 \r 1 1 X \r MMM \r 1 1 N \r MMM", new (uint, uint)[] { (0, 0), (1, 4) }}; // with invalid rover
+                yield return new object[] { "10 10 \r 1 1 N \r MMM \r 1 0 N \r MXM", new (uint, uint)[] { (1, 4), (0, 0) }}; // with invalid rover
+                yield return new object[] { "10 10 \r 1 1 N \r MMM \r 1 0 N \r MMM \r 0 0 X \r MMM" , new (uint, uint)[] { (1, 4), (1, 3), (0, 0) }}; // with collision and invalid rover
             }                     
         }
 

@@ -15,7 +15,7 @@ namespace MarsRover.Test
         public void GivenCurrentDirection_ShouldMoveNextToCorrectDirection(string currentDirectionCode, string nextDirectionCode)
         {
             var currentDirection = Direction.FromCode(currentDirectionCode);
-            var nextDirection = currentDirection.Next();
+            var nextDirection = currentDirection.NextRight();
             nextDirection.Code.Should().Be(nextDirectionCode);
         }
 
@@ -27,7 +27,7 @@ namespace MarsRover.Test
         public void GivenCurrentDirection_ShouldMovePreviousToCorrectDirection(string currentDirectionCode, string nextDirectionCode)
         {
             var currentDirection = Direction.FromCode(currentDirectionCode);
-            var nextDirection = currentDirection.Previous();
+            var nextDirection = currentDirection.NextLeft();
             nextDirection.Code.Should().Be(nextDirectionCode);
         }
     }

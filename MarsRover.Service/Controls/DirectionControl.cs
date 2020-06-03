@@ -6,15 +6,17 @@ namespace MarsRover.Service.Controls
 {
     internal class DirectionControl : IDirectionControl
     {
-        public Direction GetNextDirection(Direction currentDirection, Command command)
+        public Direction GetNextDirection(Direction currentDirection, Command currentCommand)
         {
             if (currentDirection == null) throw new ArgumentNullException(nameof(currentDirection));
-            if (command == null) throw new ArgumentNullException(nameof(command));
 
-            if (command == Command.Move)
-                throw new InvalidOperationException("Direction control does not support move command");
-            
-            return command == Command.TurnLeft ? currentDirection.Previous() : currentDirection.Next();
+            return currentCommand switch
+            {
+                { } command when command == Command.TurnRight => currentDirection.NextRight(),
+                { } command when command == Command.TurnLeft => currentDirection.NextLeft(),
+                null => throw new ArgumentNullException(nameof(currentCommand)),
+                _ => throw new InvalidOperationException("Invalid command.")
+            };
         }
 
     }

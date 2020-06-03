@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MarsRover.Models;
 using MarsRover.Service.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,7 @@ namespace MarsRover.Service.Controls
         {
             if (string.IsNullOrEmpty(command?.Trim())) throw new ArgumentNullException(nameof(command));
 
-            var lines = command.Trim().Split(LineSeparator);
+            var lines = RemoveDuplicatedSpaces(command.Trim()).Split(LineSeparator);
 
             // First line should always be the plateau
             _logger.LogDebug($"Processing line[0]: {lines[0].Trim()}");
@@ -56,7 +57,7 @@ namespace MarsRover.Service.Controls
 
                 try
                 {
-                    var roverParameters = lines[i].Trim().Split(ParameterSeparator);
+                    var roverParameters = RemoveDuplicatedSpaces(lines[i].Trim()).Split(ParameterSeparator);
 
                     if (roverParameters.Length != 3)
                     {
@@ -72,7 +73,7 @@ namespace MarsRover.Service.Controls
                         throw new ArgumentException("Invalid rover provided in command");
                     }
 
-                    var roverDirection = roverParameters[2].Trim();
+                    var roverDirection = RemoveDuplicatedSpaces(roverParameters[2].Trim());
 
                     var rover = new RoverBuilder(currentSequence).Operational(roverX, roverY, Direction.FromCode(roverDirection)).Build();
                     currentSequence++;
@@ -107,6 +108,12 @@ namespace MarsRover.Service.Controls
             }
 
             return new Plan(plateau, roverRoutes, roversWithError);
+        }
+
+        private string RemoveDuplicatedSpaces(string command)
+        {
+            var regex = new Regex("[ ]{2,}", RegexOptions.None);
+            return regex.Replace(command, " ");
         }
     }
 }

@@ -10,9 +10,10 @@ namespace MarsRover.Models
         {
             Plateau = plateau ?? throw new ArgumentNullException(nameof(plateau));
             RoverRoutes = roverRoutes ?? throw new ArgumentNullException(nameof(roverRoutes));
-            if (!roverRoutes.Any())
-                throw new ArgumentException("Plan must contain at least 1 rover route", nameof(roverRoutes));
             RoversWithError = roversWithError ?? throw new ArgumentNullException(nameof(roversWithError));
+
+            if (!roverRoutes.Any() && !roversWithError.Any())
+                throw new ArgumentException("Plan must contain at least one rover routed or with error", nameof(roverRoutes));
         }
 
         public Plateau Plateau { get;  }

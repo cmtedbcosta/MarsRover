@@ -91,7 +91,7 @@ namespace MarsRover.Service.Test
                 Command.Move, Command.Move, Command.Move, Command.Move, Command.Move, Command.Move, Command.Move
             };
 
-            var expectedPosition = ((uint) 3, (uint) 5);
+            var expectedPosition = ((uint) 3, (uint) 4);
             var expectedDirection = Direction.North; 
 
             var newRover = _navigationControl.Navigate(plateau, rover, commands, Array.Empty<Rover>());
@@ -121,6 +121,40 @@ namespace MarsRover.Service.Test
             newRover.FacingDirection.Should().Be(expectedDirection);
             newRover.IsWaitingRescue.Should().BeTrue();
             newRover.Error.Should().Contain("Collision detected");
+        }
+
+        [Fact]
+        public void GivenPlateauAndRoverToBeDeployedOutOfBounds_ShouldStopMovingAndBeWaitingForRescue()
+        {
+            var plateau = new Plateau(5, 5);
+            var rover = new RoverBuilder(1).Operational(plateau.MaxSizeX+1, plateau.MaxSizeY+1, Direction.North).Build();
+
+            var commands = new[]
+            {
+                Command.TurnRight
+            };
+
+            var newRover = _navigationControl.Navigate(plateau, rover, commands, Array.Empty<Rover>());
+            newRover.IsWaitingRescue.Should().BeTrue();
+            newRover.Error.Should().Contain("Rover would be deployed in an invalid position");
+        }
+
+        [Fact]
+        public void GivenPlateauAndRoverToBeDeployedInAnotherRoversPosition_ShouldStopMovingAndBeWaitingForRescue()
+        {
+            var plateau = new Plateau(5, 5);
+            var rover = new RoverBuilder(1).Operational(1, 1, Direction.North).Build();
+
+            var commands = new[]
+            {
+                Command.TurnRight
+            };
+
+            var otherRovers = new[] { new RoverBuilder(2).Operational( 1, 1, Direction.North).Build() };
+
+            var newRover = _navigationControl.Navigate(plateau, rover, commands, otherRovers);
+            newRover.IsWaitingRescue.Should().BeTrue();
+            newRover.Error.Should().Contain("Collision detected on deployment position");
         }
 
     }

@@ -4,6 +4,6 @@ namespace MarsRover.Service.Interfaces
 {
     internal interface IDirectionControl
     {
-        Direction GetNextDirection(Direction currentDirection, Command command);
+        Direction GetNextDirection(Direction currentDirection, Command currentCommand);
     }
 }

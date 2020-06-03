@@ -21,6 +21,9 @@ namespace MarsRover.Service.Test
         [Theory]
         [InlineData("5 5 \r 1 1 N \r MMR")]
         [InlineData("5 5 \r 1 1 N \r M M R")]
+        [InlineData("5     5 \r 1 1 N \r M M R")]
+        [InlineData("5 5 \r 1 1     N \r M M R")]
+        [InlineData("5 5 \r 1      1 N \r M M R")]
         public void GivenAValidCommand_ShouldGenerateACorrectPlan_AndNoRoversWithError(string command)
         {
             var plateau = new Plateau(5,5);
@@ -122,19 +125,32 @@ namespace MarsRover.Service.Test
 
         [Theory]
         [InlineData("5 \r 1 1 N \r MMR")]
-        [InlineData("5 5 \r 1 1 \r MMR")]
-        [InlineData("5 5 \r MMR")]
         [InlineData("1 1 N \r MMR")]
         [InlineData("MMR")]
         [InlineData("5 5 ")]
-        [InlineData("5 5 \r 1 1 X \r MMR")]
-        [InlineData("5 5 \r 1 1 N \r MXR")]
-        [InlineData("5  5 \r 1  1  N \r MXR")]
         public void GivenAnInvalidCommand_ShouldThrowArgumentException(string command)
         {
 
             Action action = () => _planControl.GeneratePlan(command);
             action.Should().Throw<ArgumentException>();
+        }
+
+        [Theory]
+        [InlineData("5 5 \r 1 1 \r MMR")]
+        [InlineData("5 5 \r MMR")]
+        [InlineData("5 5 \r 1 1 X \r MMR")]
+        [InlineData("5 5 \r 1 1 N \r MXR")]
+        public void GivenACommandWithInvalidRover_ShouldCreatePlanWithErroredRover(string command)
+        {
+
+            Action action = () =>
+            {
+                var plan = _planControl.GeneratePlan(command);
+                plan.RoverRoutes.Should().BeEmpty();
+                plan.RoversWithError.Any(r => r.Id == 1).Should().BeTrue("Rover 1 should be errored.");
+            };
+            
+            action.Should().NotThrow<ArgumentNullException>("Plan was created correctly");
         }
     }
 }

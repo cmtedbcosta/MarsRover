@@ -37,9 +37,9 @@ namespace MarsRover.Models
             return All.FirstOrDefault(s => s.Code == code?.ToUpper()) ?? throw new ArgumentException("Direction code provided is not valid");
         }
 
-        public Direction Next() => Index == 3 ? North : All.Single(d => d.Index == Index + 1);
+        public Direction NextRight() => Index == 3 ? North : All.Single(d => d.Index == Index + 1);
 
-        public Direction Previous() => Index == 0 ? West : All.Single(d => d.Index == Index - 1);
+        public Direction NextLeft() => Index == 0 ? West : All.Single(d => d.Index == Index - 1);
 
         private bool Equals(Direction other)
         {

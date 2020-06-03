@@ -21,21 +21,35 @@ namespace MarsRover.Test.Models
             _roverRoute = new RoverRoute(_rover, _commands);
         }
 
-        [Fact]
-        public void GivenValidInputForAPlan_ShouldCreateAPlan()
+        public static IEnumerable<object[]> ValidInputForPlan
+        {
+            get
+            {
+                var rover = new RoverBuilder(1).Operational(1, 1, Direction.North).Build();
+                var commands = new[] {Command.Move, Command.TurnRight, Command.Move};
+                var roverRoute = new RoverRoute(rover, commands);
+
+                yield return new object[] { new[] {roverRoute}, Array.Empty<Rover>() };
+                yield return new object[] { Array.Empty<RoverRoute>(), new [] { rover } };
+            }                     
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidInputForPlan))]
+        public void GivenValidInputForAPlan_ShouldCreateAPlan(IEnumerable<RoverRoute> roverRoutes, IEnumerable<Rover> erroredRovers)
         {
             Setup();
 
             Action action = () =>
             {
-                _ = new Plan(_plateau, new[] {_roverRoute}, Array.Empty<Rover>());
+                _ = new Plan(_plateau, roverRoutes, erroredRovers);
             };
 
             action.Should().NotThrow("Plan was correctly created.");
         }
 
         [Fact]
-        public void GivenAPlanWithEmptyRoverRoutes_ShouldThrowInvalidOperationException()
+        public void GivenAPlanWithEmptyRoverRoutesAndEmptyErroredRovers_ShouldThrowInvalidOperationException()
         {
             Setup();
 

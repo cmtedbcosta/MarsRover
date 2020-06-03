@@ -30,20 +30,26 @@ namespace MarsRover.Service.Controls
             return commands.Aggregate(rover, (current, command) => Goto(plateau, current, command, otherRovers));
         }
 
-        private bool IsOutOfBounds((uint X, uint Y) position, Plateau plateau)
+        private bool IsOutOfBounds((uint X, uint Y) position, Plateau plateau, bool isDeployment = false)
         {
             if (position.X > plateau.MaxSizeX || position.Y > plateau.MaxSizeY)
-                _logger.LogDebug($"Can't move to position {position} because that is out of plateau");
+                _logger.LogDebug(isDeployment
+                    ? $"Can't deploy position {position} because that is out of plateau"
+                    : $"Can't move to position {position} because that is out of plateau");
 
             return position.X > plateau.MaxSizeX || position.Y > plateau.MaxSizeY;
         }
 
-        private bool IsSamePositionOfOtherRover((uint X, uint Y) position, IEnumerable<Rover> otherRovers)
+        private bool IsSamePositionOfOtherRover((uint X, uint Y) position, IEnumerable<Rover> otherRovers, bool isDeployment = false)
         {
             var roverInDestinyPosition = otherRovers.FirstOrDefault(r => r.Position == position);
 
             if (roverInDestinyPosition != null)
-                _logger.LogDebug($"Can't move to position {position} because it's occupied by rover {roverInDestinyPosition.Name}");
+            {
+                _logger.LogDebug(isDeployment
+                    ? $"Can't deploy to position {position} because it's occupied by rover {roverInDestinyPosition.Name}"
+                    : $"Can't move to position {position} because it's occupied by rover {roverInDestinyPosition.Name}");
+            }
 
             return roverInDestinyPosition != null;
         }
@@ -55,6 +61,18 @@ namespace MarsRover.Service.Controls
                 _logger.LogDebug($"{rover.Name} is waiting for rescue. Ignoring command {command.Name}");
                 return rover;
             }
+
+            // Check deployment position
+            if (IsOutOfBounds(rover.Position, plateau, true))
+                return new RoverBuilder(rover.Id)
+                    .NotDeployed($"Rover would be deployed in an invalid position {rover.Position}")
+                    .Build();
+
+            // Check for other rovers in deployment position
+            if (IsSamePositionOfOtherRover(rover.Position, otherRovers, true))
+                return new RoverBuilder(rover.Id)
+                    .NotDeployed($"Collision detected on deployment position {rover.Position}.")
+                    .Build();
 
             _logger.LogDebug($"Processing command {command.Name} for rover {rover.Name}");
 

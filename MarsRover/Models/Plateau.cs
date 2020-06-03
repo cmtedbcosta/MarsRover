@@ -1,12 +1,17 @@
-﻿namespace MarsRover.Models
+﻿using System;
+
+namespace MarsRover.Models
 {
     public class Plateau
     {
         public Plateau(uint maxSizeX, uint maxSizeY)
         {
+            if (maxSizeX <= 0) throw new ArgumentOutOfRangeException(nameof(maxSizeX));
+            if (maxSizeY <= 0) throw new ArgumentOutOfRangeException(nameof(maxSizeY));
 
-            MaxSizeX = maxSizeX;
-            MaxSizeY = maxSizeY;
+            // Because 0 position is considered, than the max X and Y are the ones provided minus 1
+            MaxSizeX = maxSizeX-1;
+            MaxSizeY = maxSizeY-1;
         }
 
         public uint MaxSizeX { get;}
